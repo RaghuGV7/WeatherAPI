@@ -16,7 +16,7 @@ spec:
       - name: weatherapi
         image: "${{ secrets.AZURE_CONTAINER_REGISTRY }}/weatherapi"
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         env:
         - name: CosmosDb__ConnectionString
           value: "${{ secrets.COSMOSDB_CONNECTION_STRING }}"
@@ -29,7 +29,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
-    targetPort: 80
+  - port: 8080
+    targetPort: 8080
   selector:
     app: weatherapi
