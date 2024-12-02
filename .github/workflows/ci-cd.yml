@@ -51,6 +51,12 @@ jobs:
       run: |
         az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER_NAME }}
 
+    - name: Create Kubernetes Secret for CosmosDB
+      run: |
+          kubectl create secret generic cosmosdb-secret \
+            --from-literal=cosmosdb_connection_string='${{ secrets.COSMOSDB_CONNECTION_STRING }}' \
+            --dry-run=client -o yaml | kubectl apply -f -
+
     - name: Deploy to AKS
       run: |
         kubectl apply -f deployment.yaml

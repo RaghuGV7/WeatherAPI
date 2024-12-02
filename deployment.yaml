@@ -19,7 +19,10 @@ spec:
         - containerPort: 8080
         env:
         - name: COSMOSDB_CONNECTION_STRING
-          value: "${{ secrets.COSMOSDB_CONNECTION_STRING }}"
+              valueFrom:
+                secretKeyRef:
+                  name: cosmosdb-secret
+                  key: cosmosdb_connection_string
 
 ---
 apiVersion: v1
