@@ -61,3 +61,31 @@ jobs:
       run: |
         kubectl apply -f deployment.yaml
         kubectl set image deployment/weatherapi weatherapi=${{ secrets.CONTAINER_REGISTRY_LOGIN_SERVER }}/weatherapi:${{ github.sha }}
+
+    - name: Verify Deployment Status
+      run: |
+          kubectl rollout status deployment/weatherapi
+          kubectl get services
+
+  postman-tests:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy  # Ensures this job runs after build-and-deploy job succeeds
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Newman (Postman CLI)
+        run: |
+          npm install -g newman
+
+      - name: Run Postman Tests
+        run: |
+          newman run ./tests/WeatherAPI.postman_collection.json \
+            --reporters cli,json
+          
+      - name: Upload Newman Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: newman-report
+          path: newman/*.json

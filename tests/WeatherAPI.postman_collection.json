@@ -1,0 +1,822 @@
+{
+	"info": {
+		"_postman_id": "8f975d96-7291-40e0-85a8-dcb9fa34de65",
+		"name": "Weather API",
+		"description": "A simple ASP.NET Core 8 Web API for managing weather forecasts.\n\nContact Support:\n Name: Your Name\n Email: your.email@example.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1870985"
+	},
+	"item": [
+		{
+			"name": "/api/Weather",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var responseJson = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Response should be an array\", function () {\r",
+							"    pm.expect(responseJson).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each item in the response should have City, Date, TemperatureC, and Summary\", function () {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    \r",
+							"    // Iterate over each object in the response array\r",
+							"    responseJson.forEach(function (item) {\r",
+							"        pm.expect(item).to.have.property('city');\r",
+							"        pm.expect(item).to.have.property('date');\r",
+							"        pm.expect(item).to.have.property('temperatureC');\r",
+							"        pm.expect(item).to.have.property('summary');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Date should be in correct format (YYYY-MM-DD)\", function () {\r",
+							"    var dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$/;\r",
+							"\r",
+							"    responseJson.forEach(function (item) {\r",
+							"        pm.expect(item.date).to.match(dateRegex);\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/Weather",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"Weather"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/Weather",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Weather"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/Weather",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Function to generate a GUID\r",
+							"function generateGuid() {\r",
+							"    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {\r",
+							"        var r = Math.random() * 16 | 0,\r",
+							"            v = c === 'x' ? r : (r & 0x3 | 0x8);\r",
+							"        return v.toString(16);\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"// Generate a GUID and assign it to a Postman environment variable\r",
+							"pm.collectionVariables.set(\"newGuid\", generateGuid());\r",
+							"\r",
+							"var indianCities = [\r",
+							"    \"Mumbai\", \"Delhi\", \"Bengaluru\", \"Kolkata\", \"Chennai\", \"Hyderabad\", \r",
+							"    \"Ahmedabad\", \"Pune\", \"Jaipur\", \"Surat\", \"Lucknow\", \"Kanpur\", \r",
+							"    \"Nagpur\", \"Indore\", \"Thane\", \"Bhopal\", \"Visakhapatnam\", \"Chandigarh\", \r",
+							"    \"Patna\", \"Vadodara\", \"Ghaziabad\", \"Ludhiana\", \"Agra\", \"Nashik\", \r",
+							"    \"Faridabad\", \"Meerut\", \"Rajkot\", \"Kochi\", \"Coimbatore\", \"Madurai\"\r",
+							"];\r",
+							"\r",
+							"// Pick a random index from the list\r",
+							"var randomCity = indianCities[Math.floor(Math.random() * indianCities.length)];\r",
+							"\r",
+							"// Set the random city as an environment variable\r",
+							"pm.collectionVariables.set(\"randomCity\", randomCity);\r",
+							"\r",
+							"var minTemp = 10;  // Minimum temperature (Celsius)\r",
+							"var maxTemp = 38;   // Maximum temperature (Celsius)\r",
+							"\r",
+							"// Generate a random number between minTemp and maxTemp\r",
+							"var randomTemp = Math.floor(Math.random() * (maxTemp - minTemp + 1)) + minTemp;\r",
+							"\r",
+							"// Set the random temperature as an environment variable\r",
+							"pm.collectionVariables.set(\"randomTemperatureC\", randomTemp);\r",
+							"\r",
+							"\r",
+							"\r",
+							"var startDate = new Date(\"2024-01-01\");  // Start date (e.g., January 1, 2024)\r",
+							"var endDate = new Date(\"2024-12-31\");    // End date (e.g., December 31, 2024)\r",
+							"\r",
+							"// Generate a random time between the two dates\r",
+							"var randomTime = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());\r",
+							"\r",
+							"// Create a new Date object using the random time\r",
+							"var randomDate = new Date(randomTime);\r",
+							"\r",
+							"// Format the date into a string (ISO format or any preferred format)\r",
+							"var formattedRandomDate = randomDate.toISOString().split('T')[0]; // e.g., '2024-03-15'\r",
+							"\r",
+							"// Set the random date as an environment variable\r",
+							"pm.collectionVariables.set(\"randomDate\", formattedRandomDate);\r",
+							"\r",
+							"\r",
+							"\r",
+							"function generateRandomString(length) {\r",
+							"    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+							"    var result = '';\r",
+							"    var charactersLength = characters.length;\r",
+							"    for (var i = 0; i < length; i++) {\r",
+							"        result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"// Generate a random length between 5 and 15\r",
+							"var randomLength = Math.floor(Math.random() * (15 - 5 + 1)) + 5;\r",
+							"\r",
+							"// Generate a random string of the calculated length\r",
+							"var randomString = generateRandomString(randomLength);\r",
+							"\r",
+							"// Set the random string as an environment variable\r",
+							"pm.collectionVariables.set(\"randomText\", randomString);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test to check if the response status code is 201 (Created)\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var responseJson = pm.response.json();\r",
+							"\r",
+							"// Test to check if the returned City is the same as the sent City\r",
+							"pm.test(\"Id should match\", function () {\r",
+							"    pm.expect(responseJson.id).to.eql(pm.collectionVariables.get(\"newGuid\"));\r",
+							"});\r",
+							"\r",
+							"// Test to check if the returned City is the same as the sent City\r",
+							"pm.test(\"City should match\", function () {\r",
+							"    pm.expect(responseJson.city).to.eql(pm.collectionVariables.get(\"randomCity\"));\r",
+							"});\r",
+							"\r",
+							"// Test to check if the Date field is present and formatted correctly (in the format YYYY-MM-DD)\r",
+							"pm.test(\"Date should be in correct format (YYYY-MM-DD)\", function () {\r",
+							"    var dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$/;\r",
+							"    pm.expect(responseJson.date).to.match(dateRegex);\r",
+							"});\r",
+							"\r",
+							"// Test to check if the TemperatureC field is a number\r",
+							"pm.test(\"TemperatureC should match\", function () {\r",
+							"    pm.expect(responseJson.temperatureC).to.eql(pm.collectionVariables.get(\"randomTemperatureC\"));\r",
+							"});\r",
+							"\r",
+							"// Test to check if Summary is a non-empty string\r",
+							"pm.test(\"Summary should be a non-empty string\", function () {\r",
+							"    pm.expect(responseJson.summary).to.be.a('string').that.is.not.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"{{newGuid}}\",\n    \"city\": \"{{randomCity}}\",\n    \"date\": \"{{randomDate}}\",\n    \"temperatureC\": \"{{randomTemperatureC}}\",\n    \"Summary\": \"{{randomText}}\"\n}",
+					"options": {
+						"raw": {
+							"headerFamily": "json",
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/Weather",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"Weather"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"<string>\",\n  \"city\": \"<string>\",\n  \"date\": \"<dateTime>\",\n  \"temperatureC\": \"<double>\",\n  \"summary\": \"<string>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Weather",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Weather"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/Weather/:id/:city",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/Weather/:id/:city",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"Weather",
+						":id",
+						":city"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{newGuid}}",
+							"description": "(Required) "
+						},
+						{
+							"key": "city",
+							"value": "{{randomCity}}",
+							"description": "(Required) "
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/Weather/:id/:city",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Weather",
+								":id",
+								":city"
+							],
+							"variable": [
+								{
+									"key": "id"
+								},
+								{
+									"key": "city"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/Weather/:id",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var minTemp = 10;  // Minimum temperature (Celsius)\r",
+							"var maxTemp = 38;   // Maximum temperature (Celsius)\r",
+							"\r",
+							"// Generate a random number between minTemp and maxTemp\r",
+							"var randomTemp = Math.floor(Math.random() * (maxTemp - minTemp + 1)) + minTemp;\r",
+							"\r",
+							"// Set the random temperature as an environment variable\r",
+							"pm.collectionVariables.set(\"newTemperature\", randomTemp);\r",
+							"\r",
+							"function generateRandomString(length) {\r",
+							"    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r",
+							"    var result = '';\r",
+							"    var charactersLength = characters.length;\r",
+							"    for (var i = 0; i < length; i++) {\r",
+							"        result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"\r",
+							"// Generate a random length between 5 and 15\r",
+							"var randomLength = Math.floor(Math.random() * (15 - 5 + 1)) + 5;\r",
+							"\r",
+							"// Generate a random string of the calculated length\r",
+							"var randomString = generateRandomString(randomLength);\r",
+							"\r",
+							"// Set the random string as an environment variable\r",
+							"pm.collectionVariables.set(\"newRandomText\", randomString);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test to check if the response status code is 201 (Created)\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"{{newGuid}}\",\n    \"city\": \"{{randomCity}}\",\n    \"date\": \"{{randomDate}}\",\n    \"temperatureC\": \"{{newTemperature}}\",\n    \"Summary\": \"{{newRandomText}}\"\n}",
+					"options": {
+						"raw": {
+							"headerFamily": "json",
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/Weather/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"Weather",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{newGuid}}",
+							"description": "(Required) "
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"<string>\",\n  \"city\": \"<string>\",\n  \"date\": \"<dateTime>\",\n  \"temperatureC\": \"<double>\",\n  \"summary\": \"<string>\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Weather/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Weather",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/Weather/:id/:city AfterUpdate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test to check if the response status code is 201 (Created)\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var responseJson = pm.response.json();\r",
+							"\r",
+							"// Test to check if the returned City is the same as the sent City\r",
+							"pm.test(\"Id should match\", function () {\r",
+							"    pm.expect(responseJson.id).to.eql(pm.collectionVariables.get(\"newGuid\"));\r",
+							"});\r",
+							"\r",
+							"// Test to check if the returned City is the same as the sent City\r",
+							"pm.test(\"City should match\", function () {\r",
+							"    pm.expect(responseJson.city).to.eql(pm.collectionVariables.get(\"randomCity\"));\r",
+							"});\r",
+							"\r",
+							"// Test to check if the Date field is present and formatted correctly (in the format YYYY-MM-DD)\r",
+							"pm.test(\"Date should be in correct format (YYYY-MM-DD)\", function () {\r",
+							"    var dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$/;\r",
+							"    pm.expect(responseJson.date).to.match(dateRegex);\r",
+							"});\r",
+							"\r",
+							"// Test to check if the TemperatureC field is a number\r",
+							"pm.test(\"TemperatureC should match\", function () {\r",
+							"    pm.expect(responseJson.temperatureC).to.eql(pm.collectionVariables.get(\"newTemperature\"));\r",
+							"});\r",
+							"\r",
+							"// Test to check if Summary is a non-empty string\r",
+							"pm.test(\"Summary should match\", function () {\r",
+							"    pm.expect(responseJson.summary).to.eql(pm.collectionVariables.get(\"newRandomText\"));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/Weather/:id/:city",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"Weather",
+						":id",
+						":city"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{newGuid}}",
+							"description": "(Required) "
+						},
+						{
+							"key": "city",
+							"value": "{{randomCity}}",
+							"description": "(Required) "
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/Weather/:id/:city",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Weather",
+								":id",
+								":city"
+							],
+							"variable": [
+								{
+									"key": "id"
+								},
+								{
+									"key": "city"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/Weather/:id/:city",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test to check if the response status code is 201 (Created)\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/Weather/:id/:city",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"Weather",
+						":id",
+						":city"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{newGuid}}",
+							"description": "(Required) "
+						},
+						{
+							"key": "city",
+							"value": "{{randomCity}}",
+							"description": "(Required) "
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/Weather/:id/:city",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Weather",
+								":id",
+								":city"
+							],
+							"variable": [
+								{
+									"key": "id"
+								},
+								{
+									"key": "city"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "/api/Weather/:id/:city AfterDelete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test to check if the response status code is 201 (Created)\r",
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/Weather/:id/:city",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"Weather",
+						":id",
+						":city"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{newGuid}}",
+							"description": "(Required) "
+						},
+						{
+							"key": "city",
+							"value": "{{randomCity}}",
+							"description": "(Required) "
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/Weather/:id/:city",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"Weather",
+								":id",
+								":city"
+							],
+							"variable": [
+								{
+									"key": "id"
+								},
+								{
+									"key": "city"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://20.254.81.174:8080"
+		},
+		{
+			"key": "newGuid",
+			"value": ""
+		},
+		{
+			"key": "randomCity",
+			"value": ""
+		},
+		{
+			"key": "randomTemperatureC",
+			"value": ""
+		},
+		{
+			"key": "randomDate",
+			"value": ""
+		},
+		{
+			"key": "randomText",
+			"value": ""
+		},
+		{
+			"key": "newTemperature",
+			"value": ""
+		},
+		{
+			"key": "newRandomText",
+			"value": ""
+		}
+	]
+}
