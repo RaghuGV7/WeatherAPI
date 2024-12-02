@@ -7,8 +7,8 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app
+RUN dotnet restore ./WeatherApi.csproj
+RUN dotnet publish ./WeatherApi.csproj -c Release -o /app
 
 # Final image
 FROM base AS final
