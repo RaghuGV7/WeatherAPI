@@ -8,7 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton(s =>
 {
     // Get the connection string from configuration (appsettings.json or environment variables)
-    var cosmosDbConnectionString = builder.Configuration.GetConnectionString("CosmosDb");
+    string cosmosDbConnectionString;
+    if (builder.Configuration.GetConnectionString("CosmosDb") is string fromConfig && string.IsNullOrWhiteSpace(fromConfig))
+        cosmosDbConnectionString = fromConfig;
+    else
+        cosmosDbConnectionString = Environment.GetEnvironmentVariable("COSMOSDB_CONNECTION_STRING")!;
+
     return new CosmosClient(cosmosDbConnectionString);
 });
 
