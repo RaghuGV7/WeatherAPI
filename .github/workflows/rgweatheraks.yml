@@ -1,3 +1,4 @@
+name: Automated Deploy to AKS
 on:
   # push:
   #   branches:
@@ -7,7 +8,7 @@ on:
 env:
   CONTAINER_REGISTRY_LOGIN_SERVER: rgweatheracr.azurecr.io
   PROJECT_NAME_FOR_DOCKER: weatherapi
-  DOCKER_FILE_PATH: .\Dockerfile
+  DOCKER_FILE_PATH: ./Dockerfile
   CLUSTER_NAME: rgweatheraks
   CLUSTER_RESOURCE_GROUP: weather
   DEPLOYMENT_MANIFEST_PATH: '[./manifests/deployment.yml]'
