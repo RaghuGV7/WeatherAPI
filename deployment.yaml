@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weatherapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: weatherapi
+  template:
+    metadata:
+      labels:
+        app: weatherapi
+    spec:
+      containers:
+      - name: weatherapi
+        image: "${{ secrets.AZURE_CONTAINER_REGISTRY }}/weatherapi"
+        ports:
+        - containerPort: 80
+        env:
+        - name: CosmosDb__ConnectionString
+          value: "${{ secrets.COSMOSDB_CONNECTION_STRING }}"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weatherapi-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: weatherapi
