@@ -44,4 +44,10 @@ public class WeatherController : ControllerBase
         await _weatherService.DeleteAsync(id, city);
         return NoContent();
     }
+
+    [HttpGet("sayhello/{name}")]
+    public async Task<IActionResult> SayHello(string name)
+    {
+        return Ok($"Hello, {name}");
+    }
 }
