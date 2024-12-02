@@ -6,6 +6,10 @@ on:
       - main  # Trigger on push to main branch
   workflow_dispatch:
 
+env:
+  AKS_CLUSTER_NAME: rgweatheraks
+  RESOURCE_GROUP: weather
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -50,4 +54,4 @@ jobs:
     - name: Deploy to AKS
       run: |
         kubectl apply -f deployment.yaml
-        kubectl set image deployment/weatherapi weatherapi=${{ secrets.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
+        kubectl set image deployment/weatherapi weatherapi=${{ secrets.CONTAINER_REGISTRY_LOGIN_SERVER }}/weatherapi:${{ github.sha }}
