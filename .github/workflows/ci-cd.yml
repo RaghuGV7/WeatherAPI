@@ -40,8 +40,8 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ secrets.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }} .
-        docker push ${{ secrets.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
+        docker build -t ${{ secrets.CONTAINER_REGISTRY_LOGIN_SERVER }}/weatherapi:${{ github.sha }} .
+        docker push ${{ secrets.CONTAINER_REGISTRY_LOGIN_SERVER }}/weatherapi:${{ github.sha }}
 
     - name: Set AKS Context
       run: |
