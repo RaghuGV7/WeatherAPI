@@ -2,6 +2,8 @@ on:
   push:
     branches:
     - main
+  workflow_dispatch:
+  
 env:
   CONTAINER_REGISTRY_LOGIN_SERVER: rgweatheracr.azurecr.io
   PROJECT_NAME_FOR_DOCKER: weatherapi
